@@ -1,0 +1,87 @@
+# Test playbook for Ansible role bertvv.bind
+---
+
+- hosts: bind
+  become: true
+  vars:
+    bind_multiple_zone_names:
+      - a.out.local
+      - a.out.ba
+    bind_allow_query:
+      - any
+    bind_listen_ipv4:
+      - any
+    bind_listen_ipv6:
+      - any
+    bind_acls:
+      - name: acl1
+        match_list:
+          - 192.168.168.0/24
+    bind_forwarders:
+      - '8.8.8.8'
+      - '8.8.4.4'
+    bind_recursion: true
+    bind_check_hosts: 'master ignore'
+    bind_zone_networks:
+      - '192.168'
+      - '10'
+    bind_zone_ipv6_networks:
+      - '2001:db8::/48'
+    bind_zone_name: 'a.out.ba'
+    bind_zone_master_server_ip: 192.168.168.147
+    bind_zone_name_servers:
+      - ns1
+      - ns2
+    bind_zone_hosts:
+      - name: ns1
+        ip: 192.168.168.147
+      - name: ns2
+        ip: 192.168.168.148
+      - name: srv001
+        ip: 192.168.168.111
+        aliases:
+          - www
+      - name: srv002
+        ip: 192.168.168.112
+        aliases:
+          - mysql
+      - name: mail001
+        ip: 192.168.168.180
+        ipv6: 2001:db8::d:1
+        aliases:
+          - smtp
+          - mail-in
+      - name: mail002
+        ip: 172.17.2.2
+        ipv6: 2001:db8::d:2
+      - name: mail003
+        ip: 172.17.2.3
+        ipv6: 2001:db8::d:3
+        aliases:
+          - imap
+          - mail-out
+      - name: srv010
+        ip: 10.0.0.10
+      - name: srv011
+        ip: 10.0.0.11
+      - name: srv012
+        ip: 10.0.0.12
+    bind_zone_mail_servers:
+      - name: mail001
+        preference: 10
+      - name: mail002
+        preference: 20
+    bind_zone_services:
+      - name: _ldap._tcp
+        weight: 100
+        port: 88
+        target: srv010
+    bind_zone_text:
+      - name: _kerberos
+        text: KERBEROS.ACME-INC.COM
+      - name: '@'
+        text:
+          - 'some text'
+          - 'more text'
+  roles:
+    - ansible-role-bind
