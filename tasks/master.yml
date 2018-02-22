@@ -11,7 +11,9 @@
     mode: '0640'
     setype: named_conf_t
     validate: 'named-checkconf %s'
-  notify: restart bind
+  notify:
+  - restart bind
+  - firewall allow dns
   tags: bind
 
 - name: Master | Create forward lookup zone file
@@ -23,7 +25,9 @@
     mode: "0640"
     setype: named_zone_t
     validate: 'named-checkzone -d {{ bind_zone_name }} %s'
-  notify: restart bind
+  notify:
+  - restart bind
+  - firewall allow dns
   tags: bind
 
 - name: Master | Create reverse lookup zone file
@@ -36,7 +40,9 @@
     setype: named_zone_t
     validate: "named-checkzone {{ ('.'.join(item.replace(item+'.','').split('.')[::-1])) }}.in-addr.arpa %s"
   with_items: "{{ bind_zone_networks }}"
-  notify: restart bind
+  notify:
+  - restart bind
+  - firewall allow dns
   tags: bind
 
 - name: Master | Create reverse IPv6 lookup zone file

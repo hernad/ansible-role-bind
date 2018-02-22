@@ -5,3 +5,6 @@
   service:
     name: "{{ bind_service }}"
     state: restarted
+
+- name: firewall allow dns
+  command: firewall-cmd --add-service=dns --permanent
